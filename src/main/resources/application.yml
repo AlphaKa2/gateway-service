@@ -1,0 +1,49 @@
+#?? ??
+server:
+  port: 8080
+
+
+spring:
+  config:
+    import: file:.env[.properties]
+  application:
+    name: gateway-service
+
+  #????? ??
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/**
+          filters:
+            - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
+
+
+
+
+
+#??? ????? ??
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: "${EUREKA_URL}"
+
+
+#JWT ??
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+  access:
+    expiration: 3600000
+  refresh:
+    expiration: 604800000
