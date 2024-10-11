@@ -1,4 +1,4 @@
-#?? ??
+#서버 포트
 server:
   port: 8080
 
@@ -9,16 +9,37 @@ spring:
   application:
     name: gateway-service
 
-  #????? ??
+  #클라우드
   cloud:
     gateway:
       routes:
+#
+#        - id: user-service-with-authentication
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            -
+#          filters:
+#            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+#            - name: JwtAuthenticationFilter
+#              args:
+#                loginPageRedirectionUrl: "${LOGIN_URL}"
+#            - name: RemoveUserHeadersFilter
+
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
           filters:
             - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+
+#        - id: auth-service-with-authentication
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            -
+#          filters:
+#            - name: JwtAuthenticationFilter
+#              args:
+#                loginPageRedirectionUrl: "${LOGIN_URL}"
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
@@ -31,7 +52,7 @@ spring:
 
 
 
-#??? ????? ??
+#유레카
 eureka:
   client:
     register-with-eureka: true
@@ -40,10 +61,6 @@ eureka:
       defaultZone: "${EUREKA_URL}"
 
 
-#JWT ??
+#JWT 토큰
 jwt:
   secretKey: ${JWT_SECRET_KEY}
-  access:
-    expiration: 3600000
-  refresh:
-    expiration: 604800000
