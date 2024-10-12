@@ -1,6 +1,6 @@
 package com.alphaka.gatewayservice.filter;
 
-import com.alphaka.gatewayservice.exception.TokenExpiredException;
+import com.alphaka.gatewayservice.exception.custom.TokenExpiredException;
 import com.alphaka.gatewayservice.jwt.JwtService;
 import java.util.Map;
 import java.util.Optional;
@@ -19,8 +19,10 @@ import reactor.core.publisher.Mono;
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
-    public static final String AUTHENTICATED_USER_EMAIL_HEADER = "X-User-Email";
+    public static final String AUTHENTICATED_USER_ID_HEADER = "X-User-Id";
     public static final String AUTHENTICATED_USER_ROLE_HEADER = "X-User-Role";
+    public static final String AUTHENTICATED_USER_PROFILE_HEADER = "X-User-Profile";
+    public static final String AUTHENTICATED_USER_NICKNAME_HEADER = "X-User-Nickname";
 
     private final JwtService jwtService;
 
@@ -52,8 +54,10 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     private ServerWebExchange setAuthenticationHeader(ServerWebExchange exchange, Map<String, String> userInformation) {
         return exchange.mutate()
                 .request(r -> r.headers(headers -> {
-                    headers.add(AUTHENTICATED_USER_EMAIL_HEADER, userInformation.get(JwtService.EMAIL_CLAIM));
+                    headers.add(AUTHENTICATED_USER_ID_HEADER, userInformation.get(JwtService.ID_CLAIM));
                     headers.add(AUTHENTICATED_USER_ROLE_HEADER, userInformation.get(JwtService.ROLE_CLAIM));
+                    headers.add(AUTHENTICATED_USER_NICKNAME_HEADER, userInformation.get(JwtService.NICKNAME_CLAIM));
+                    headers.add(AUTHENTICATED_USER_PROFILE_HEADER, userInformation.get(JwtService.PROFILE_CLAIM));
                 }))
                 .build();
     }
