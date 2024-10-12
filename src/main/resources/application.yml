@@ -13,17 +13,17 @@ spring:
   cloud:
     gateway:
       routes:
-#
+
 #        - id: user-service-with-authentication
 #          uri: lb://USER-SERVICE
 #          predicates:
 #            -
+#
 #          filters:
 #            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
 #            - name: JwtAuthenticationFilter
 #              args:
 #                loginPageRedirectionUrl: "${LOGIN_URL}"
-#            - name: RemoveUserHeadersFilter
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -32,14 +32,15 @@ spring:
           filters:
             - RewritePath=/user-service/(?<remaining>.*), /${remaining}
 
-#        - id: auth-service-with-authentication
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            -
-#          filters:
-#            - name: JwtAuthenticationFilter
-#              args:
-#                loginPageRedirectionUrl: "${LOGIN_URL}"
+        - id: auth-service-with-authentication
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/logout
+          filters:
+            - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
 
         - id: auth-service
           uri: lb://AUTH-SERVICE

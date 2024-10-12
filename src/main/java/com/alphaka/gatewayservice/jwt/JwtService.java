@@ -19,8 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-    public static final String EMAIL_CLAIM = "email";
+    public static final String ID_CLAIM = "id";
     public static final String ROLE_CLAIM = "role";
+    public static final String NICKNAME_CLAIM = "nickname";
+    public static final String PROFILE_CLAIM = "profile";
 
     private static final String BEARER = "Bearer ";
     private static final String ACCESS_TOKEN_HEADER = "Authorization";
@@ -65,8 +67,10 @@ public class JwtService {
                     .getPayload();
 
             Map<String, String> userInformation = new HashMap<>();
-            userInformation.put(EMAIL_CLAIM, payload.get(EMAIL_CLAIM, String.class));
+            userInformation.put(ID_CLAIM, String.valueOf(payload.get(ID_CLAIM, Long.class)));
             userInformation.put(ROLE_CLAIM, payload.get(ROLE_CLAIM, String.class));
+            userInformation.put(NICKNAME_CLAIM, payload.get(NICKNAME_CLAIM, String.class));
+            userInformation.put(PROFILE_CLAIM, payload.get(PROFILE_CLAIM, String.class));
 
             return userInformation;
         } catch (JwtException e) {

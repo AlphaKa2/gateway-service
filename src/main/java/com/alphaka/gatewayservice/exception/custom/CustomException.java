@@ -1,5 +1,6 @@
-package com.alphaka.gatewayservice.exception;
+package com.alphaka.gatewayservice.exception.custom;
 
+import com.alphaka.gatewayservice.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter
