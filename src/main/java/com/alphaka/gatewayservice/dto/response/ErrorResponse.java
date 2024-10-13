@@ -1,4 +1,4 @@
-package com.alphaka.gatewayservice.dto;
+package com.alphaka.gatewayservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
