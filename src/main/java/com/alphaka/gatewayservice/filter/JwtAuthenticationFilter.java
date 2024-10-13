@@ -1,7 +1,9 @@
 package com.alphaka.gatewayservice.filter;
 
+import com.alphaka.gatewayservice.dto.request.AccessTokenRequest;
 import com.alphaka.gatewayservice.exception.custom.TokenExpiredException;
 import com.alphaka.gatewayservice.jwt.JwtService;
+import com.alphaka.gatewayservice.openfeign.BlacklistClient;
 import java.util.Map;
 import java.util.Optional;
 import lombok.Getter;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -26,9 +29,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
 
     private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    private final BlacklistClient blacklistClient;
+
+    public JwtAuthenticationFilter(JwtService jwtService, @Lazy BlacklistClient blacklistClient) {
         super(Config.class);
         this.jwtService = jwtService;
+        this.blacklistClient = blacklistClient;
+
     }
 
     @Override
@@ -42,12 +49,24 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             }
 
             String accessToken = maybeAccessToken.get();
-            if (!jwtService.isValidToken(accessToken)) { //유효하지 않다면 401 응답, 프론트는 인증 서비스에 재발급 요청
+            //유효하지 않다면 401 응답, 프론트는 인증 서비스에 재발급 요청
+            if (!jwtService.isValidToken(accessToken)) {
                 throw new TokenExpiredException();
             }
 
-            //유효한 토큰이라면, 유저 정보를 요청 헤더에 추가
-            return chain.filter(setAuthenticationHeader(exchange, jwtService.extractUserInformation(accessToken)));
+
+            return blacklistClient.blacklist(new AccessTokenRequest(accessToken))
+                    .flatMap(apiResponse -> {
+                        // 블랙리스트에 토큰이 있다면 예외
+                        if (apiResponse.getData()) {
+                            return Mono.error(new TokenExpiredException());
+                        }
+
+                        // 인증된 요청
+                        return chain.filter(
+                                setAuthenticationHeader(exchange, jwtService.extractUserInformation(accessToken)));
+                    });
+
         };
     }
 

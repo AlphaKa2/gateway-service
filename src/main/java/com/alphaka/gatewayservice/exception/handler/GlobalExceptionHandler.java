@@ -1,6 +1,6 @@
 package com.alphaka.gatewayservice.exception.handler;
 
-import com.alphaka.gatewayservice.dto.ErrorResponse;
+import com.alphaka.gatewayservice.dto.response.ErrorResponse;
 import com.alphaka.gatewayservice.exception.custom.CustomException;
 import com.alphaka.gatewayservice.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
