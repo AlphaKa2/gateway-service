@@ -14,16 +14,16 @@ spring:
     gateway:
       routes:
 
-#        - id: user-service-with-authentication
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            -
-#
-#          filters:
-#            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
-#            - name: JwtAuthenticationFilter
-#              args:
-#                loginPageRedirectionUrl: "${LOGIN_URL}"
+        - id: user-service-with-authentication
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/follow/{targetUserId}, /user-service/unfollow/{targetUserId}
+            - Method=POST
+          filters:
+            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -49,7 +49,15 @@ spring:
           filters:
             - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
 
-
+        - id: blog-service
+          uri: lb://BLOG-SERVICE
+          predicates:
+            - Path=/blog-service/api/posts
+          filters:
+            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
 
 
 
