@@ -17,8 +17,11 @@ spring:
         - id: user-service-with-authentication
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/follow/{targetUserId}, /user-service/unfollow/{targetUserId}
-            - Method=POST
+            - Path= >
+              /user-service/follow/{targetUserId},
+              /user-service/unfollow/{targetUserId},
+              /user-service/users/{userId}/**
+            - Method=POST, PUT
           filters:
             - RewritePath=/user-service/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
@@ -49,7 +52,7 @@ spring:
           filters:
             - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
 
-        - id: blog-service
+        - id: blog-service-with-authentication
           uri: lb://BLOG-SERVICE
           predicates:
             - Path=/blog-service/api/posts
@@ -58,6 +61,13 @@ spring:
             - name: JwtAuthenticationFilter
               args:
                 loginPageRedirectionUrl: "${LOGIN_URL}"
+
+        - id: blog-service
+          uri: lb://BLOG-SERVICE
+          predicates:
+            - Path=/blog-service/**
+          filters:
+            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
 
 
 
