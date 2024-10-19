@@ -14,19 +14,21 @@ spring:
     gateway:
       routes:
 
-#        - id: user-service-with-authentication
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            -
-#
-#          filters:
-#            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
-#            - name: JwtAuthenticationFilter
-#              args:
-#                loginPageRedirectionUrl: "${LOGIN_URL}"
+        - id: user-service-with-authentication
+          uri: lb://USER-SERVICE
+          order: 0
+          predicates:
+            - Path=/user-service/users/{userId}/details, /user-service/users/{userId}/password, /user-service/users/{userId}/mbti, /user-service/users/{userId}/following
+            - Method=POST, DELETE, PUT
+          filters:
+            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
 
         - id: user-service
           uri: lb://USER-SERVICE
+          order: 1
           predicates:
             - Path=/user-service/**
           filters:
@@ -34,6 +36,7 @@ spring:
 
         - id: auth-service-with-authentication
           uri: lb://AUTH-SERVICE
+          order: 1
           predicates:
             - Path=/auth-service/logout
           filters:
@@ -44,12 +47,30 @@ spring:
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
+          order: 2
           predicates:
             - Path=/auth-service/**
           filters:
             - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
 
+        - id: blog-service-with-authentication
+          uri: lb://BLOG-SERVICE
+          order: 1
+          predicates:
+            - Path=/blog-service/api/posts
+          filters:
+            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
 
+        - id: blog-service
+          uri: lb://BLOG-SERVICE
+          order: 2
+          predicates:
+            - Path=/blog-service/**
+          filters:
+            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
 
 
 
