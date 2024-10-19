@@ -1,0 +1,129 @@
+#서버 포트
+server:
+  port: 8000
+
+
+spring:
+  application:
+    name: gateway-service
+
+  #클라우드
+  cloud:
+    gateway:
+      routes:
+
+        - id: user-service-with-authentication
+          uri: lb://USER-SERVICE
+          order: 0
+          predicates:
+            - Path=/user-service/users/{userId}/details, /user-service/users/{userId}/password, /user-service/users/{userId}/mbti, /user-service/users/{userId}/following
+            - Method=POST, DELETE, PUT
+          filters:
+            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          order: 1
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+
+        - id: auth-service-with-authentication
+          uri: lb://AUTH-SERVICE
+          order: 1
+          predicates:
+            - Path=/auth-service/logout
+          filters:
+            - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
+
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          order: 2
+          predicates:
+            - Path=/auth-service/**
+          filters:
+            - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
+
+        - id: blog-service-with-authentication
+          uri: lb://BLOG-SERVICE
+          order: 1
+          predicates:
+            - Path=/blog-service/api/posts
+          filters:
+            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: "${LOGIN_URL}"
+
+        - id: blog-service
+          uri: lb://BLOG-SERVICE
+          order: 2
+          predicates:
+            - Path=/blog-service/**
+          filters:
+            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
+
+
+
+
+#local 프로필
+---
+spring:
+  config:
+    import: file:.env[.properties]
+
+  cloud:
+    config:
+      enabled: false
+
+#유레카
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: "${EUREKA_URL}"
+
+
+#JWT 토큰
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
+
+
+
+#develop 프로필
+---
+
+spring:
+  config:
+    activate:
+      on-profile: develop
+    import: configserver:http://172.16.210.60:8888
+
+
+  cloud:
+    config:
+      name: gateway-service
+      profile: develop
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: "${alphaka.eureka.url}"
+    webclient:
+      enabled: true
+
+
+#JWT 토큰
+jwt:
+  secretKey: "${alphaka.jwt.secretKey}"
