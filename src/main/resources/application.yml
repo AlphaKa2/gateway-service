@@ -16,12 +16,10 @@ spring:
 
         - id: user-service-with-authentication
           uri: lb://USER-SERVICE
+          order: 0
           predicates:
-            - Path= >
-              /user-service/follow/{targetUserId},
-              /user-service/unfollow/{targetUserId},
-              /user-service/users/{userId}/**
-            - Method=POST, PUT
+            - Path=/user-service/users/{userId}/details, /user-service/users/{userId}/password, /user-service/users/{userId}/mbti, /user-service/users/{userId}/following
+            - Method=POST, DELETE, PUT
           filters:
             - RewritePath=/user-service/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
@@ -30,6 +28,7 @@ spring:
 
         - id: user-service
           uri: lb://USER-SERVICE
+          order: 1
           predicates:
             - Path=/user-service/**
           filters:
@@ -37,6 +36,7 @@ spring:
 
         - id: auth-service-with-authentication
           uri: lb://AUTH-SERVICE
+          order: 1
           predicates:
             - Path=/auth-service/logout
           filters:
@@ -47,6 +47,7 @@ spring:
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
+          order: 2
           predicates:
             - Path=/auth-service/**
           filters:
@@ -54,6 +55,7 @@ spring:
 
         - id: blog-service-with-authentication
           uri: lb://BLOG-SERVICE
+          order: 1
           predicates:
             - Path=/blog-service/api/posts
           filters:
@@ -64,6 +66,7 @@ spring:
 
         - id: blog-service
           uri: lb://BLOG-SERVICE
+          order: 2
           predicates:
             - Path=/blog-service/**
           filters:
