@@ -1,11 +1,9 @@
 #서버 포트
 server:
-  port: 8080
+  port: 8000
 
 
 spring:
-  config:
-    import: file:.env[.properties]
   application:
     name: gateway-service
 
@@ -74,6 +72,17 @@ spring:
 
 
 
+
+#local 프로필
+---
+spring:
+  config:
+    import: file:.env[.properties]
+
+  cloud:
+    config:
+      enabled: false
+
 #유레카
 eureka:
   client:
@@ -86,3 +95,35 @@ eureka:
 #JWT 토큰
 jwt:
   secretKey: ${JWT_SECRET_KEY}
+
+
+
+#develop 프로필
+---
+
+spring:
+  config:
+    activate:
+      on-profile: develop
+    import: configserver:http://172.16.210.60:8888
+
+
+  cloud:
+    config:
+      name: gateway-service
+      profile: develop
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: "${alphaka.eureka.url}"
+    webclient:
+      enabled: true
+
+
+#JWT 토큰
+jwt:
+  secretKey: "${alphaka.jwt.secretKey}"
