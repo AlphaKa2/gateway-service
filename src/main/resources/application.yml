@@ -10,6 +10,23 @@ spring:
   #클라우드
   cloud:
     gateway:
+
+      default-filters:
+        - name: LoggingGlobalFilter
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: 'http://localhost:3000'
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+
       routes:
 
         - id: user-service-with-authentication
