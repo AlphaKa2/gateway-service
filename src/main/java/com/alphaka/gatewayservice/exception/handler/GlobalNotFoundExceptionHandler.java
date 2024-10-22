@@ -24,4 +24,5 @@ public class GlobalNotFoundExceptionHandler implements WebExceptionHandler {
                 ex); // 스택 트레이스 출력
 
         return exchange.getResponse().setComplete();
+    }
 }
