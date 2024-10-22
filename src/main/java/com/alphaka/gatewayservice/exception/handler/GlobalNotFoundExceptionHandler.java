@@ -16,9 +16,12 @@ public class GlobalNotFoundExceptionHandler implements WebExceptionHandler {
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        if (exchange.getResponse().getStatusCode() == HttpStatus.NOT_FOUND) {
-            log.info("404 Not Found - Request URL: {}, Request Method: {}", exchange.getRequest().getURI(), exchange.getRequest().getMethod().name());
-        }
-        return Mono.error(ex);
-    }
+        // 로그에 예외 메시지와 스택 트레이스를 함께 출력
+        log.error("Exception occurred - Request URL: {}, Request Method: {}, Exception: {}",
+                exchange.getRequest().getURI(),
+                exchange.getRequest().getMethod(),
+                ex.toString(), // 예외의 간단한 정보 출력 (메시지 및 클래스명)
+                ex); // 스택 트레이스 출력
+
+        return exchange.getResponse().setComplete();
 }
