@@ -25,6 +25,7 @@ pipeline {
 
         // kustomize overlay 경로
         OVERLAY_PATH = "overlays/dev/${env.SERVICE_NAME}"
+
     }
 
     stages {
