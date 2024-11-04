@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
 
-@ReactiveFeignClient(name = "AUTH-SERVICE")
+@ReactiveFeignClient(name = "auth-service")
 public interface BlacklistClient {
 
     @GetMapping("/blacklist")

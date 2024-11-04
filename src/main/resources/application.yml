@@ -2,7 +2,6 @@
 server:
   port: 8000
 
-
 spring:
   application:
     name: gateway-service
@@ -11,13 +10,11 @@ spring:
   cloud:
     gateway:
 
-      default-filters:
-        - name: LoggingGlobalFilter
-
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: 'http://localhost:3000'
+            allowedOrigins:
+              - 'http://localhost:3000'
             allow-credentials: true
             allowedHeaders: '*'
             allowedMethods:
@@ -26,74 +23,88 @@ spring:
               - POST
               - DELETE
               - OPTIONS
+              - PATCH
+
 
       routes:
 
         - id: user-service-with-authentication
-          uri: lb://USER-SERVICE
-          order: 0
+          uri: lb://user-service
           predicates:
-            - Path=/user-service/users/{userId}/details, /user-service/users/{userId}/password, /user-service/users/{userId}/mbti, /user-service/users/{userId}/following
-            - Method=POST, DELETE, PUT
+            - Path=/user-service/auth/**
           filters:
-            - RewritePath=/user-service/(?<remaining>.*), /${remaining}
+            - RewritePath=/user-service/auth/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
               args:
-                loginPageRedirectionUrl: "${LOGIN_URL}"
+                loginPageRedirectionUrl: http://localhost:3000/login
 
         - id: user-service
-          uri: lb://USER-SERVICE
-          order: 1
+          uri: lb://user-service
           predicates:
             - Path=/user-service/**
           filters:
             - RewritePath=/user-service/(?<remaining>.*), /${remaining}
 
         - id: auth-service-with-authentication
-          uri: lb://AUTH-SERVICE
-          order: 1
+          uri: lb://auth-service
           predicates:
-            - Path=/auth-service/logout
+            - Path=/auth-service/auth/**
           filters:
-            - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
+            - RewritePath=/auth-service/auth/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
               args:
-                loginPageRedirectionUrl: "${LOGIN_URL}"
+                loginPageRedirectionUrl: http://localhost:3000/login
 
         - id: auth-service
-          uri: lb://AUTH-SERVICE
-          order: 2
+          uri: lb://auth-service
           predicates:
             - Path=/auth-service/**
           filters:
             - RewritePath=/auth-service/(?<remaining>.*), /${remaining}
 
         - id: blog-service-with-authentication
-          uri: lb://BLOG-SERVICE
-          order: 1
+          uri: lb://blog-service
           predicates:
-            - Path=/blog-service/api/posts
+            - Path=/blog-service/auth/**
+
           filters:
-            - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
+            - RewritePath=/blog-service/auth/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
               args:
-                loginPageRedirectionUrl: "${LOGIN_URL}"
+                loginPageRedirectionUrl: http://localhost:3000/login
 
         - id: blog-service
-          uri: lb://BLOG-SERVICE
-          order: 2
+          uri: lb://blog-service
           predicates:
             - Path=/blog-service/**
           filters:
             - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
 
 
+        - id: plan-service-with-authentication
+          uri: lb://travel-service
+          predicates:
+            - Path=/plan-service/auth/**
+          filters:
+            - RewritePath=/plan-service/auth/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: http://localhost:3000/login
+
+        - id: plan-service
+          uri: lb://travel-service
+          predicates:
+            - Path=/plan-service/**
+          filters:
+            - RewritePath=/plan-service/(?<remaining>.*), /${remaining}
 
 
 #local 프로필
 ---
 spring:
   config:
+    activate:
+      on-profile: local
     import: file:.env[.properties]
 
   cloud:
@@ -111,7 +122,7 @@ eureka:
 
 #JWT 토큰
 jwt:
-  secretKey: ${JWT_SECRET_KEY}
+  secretKey: "${JWT_SECRET_KEY}"
 
 
 
@@ -122,25 +133,22 @@ spring:
   config:
     activate:
       on-profile: develop
-    import: configserver:http://172.16.210.60:8888
-
-
-  cloud:
-    config:
-      name: gateway-service
-      profile: develop
 
 
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: "${alphaka.eureka.url}"
-    webclient:
-      enabled: true
-
+    enabled: false
 
 #JWT 토큰
 jwt:
-  secretKey: "${alphaka.jwt.secretKey}"
+  secretKey: "${JWT_SECRETKEY}"
+
+logging:
+  level:
+    org.springframework.cloud.kubernetes.discovery: DEBUG
+    org.springframework.cloud.gateway.filter: DEBUG  # 게이트웨이 필터 관련 로그
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+    org.springframework.cloud.kubernetes: DEBUG
+    reactor.netty.http.server: DEBUG   # Netty 서버 로그 디버그 레벨
+    reactor.netty: INFO                # 다른 Netty 관련 로그는 INFO로 설정
+    io.kubernetes.client: DEBUG
