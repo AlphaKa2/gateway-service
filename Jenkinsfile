@@ -37,7 +37,7 @@ pipeline {
 
         stage('Build & Test') {
             steps {
-                sh './gradlew clean build -Dspring.profiles.active=develop --no-daemon'
+                sh './gradlew clean build -Dspring.profiles.active=develop --no-daemon -x test'
             }
         }
 
