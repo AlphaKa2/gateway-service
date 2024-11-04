@@ -78,7 +78,7 @@ pipeline {
                         # 변경 사항 커밋 및 푸시
                         git add ${OVERLAY_PATH}/deployment-patch.yaml
                         git commit -m "Build ${SERVICE_NAME} image with new image tag: ${DOCKER_TAG}"
-                        git push origin master
+                        git push origin develop
                     '''
                 }
             }
