@@ -65,7 +65,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${env.GITHUB_CREDENTIAL}", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh '''
                         # 매니페스트 저장소 클론
-                        git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
+                        git clone ${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
                         cd ${MANIFEST_REPO_DIR}
 
                         # 이미지 태그 업데이트
