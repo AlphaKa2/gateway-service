@@ -64,6 +64,12 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${env.GITHUB_CREDENTIAL}", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh '''
+
+                        # 기존 디렉토리 삭제
+                        if [ -d "${MANIFEST_REPO_DIR}" ]; then
+                        rm -rf ${MANIFEST_REPO_DIR}
+                        fi
+                      
                         # 매니페스트 저장소 클론
                         git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
                         cd ${MANIFEST_REPO_DIR}
