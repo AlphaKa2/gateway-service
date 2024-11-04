@@ -71,6 +71,10 @@ pipeline {
                         # 매니페스트 저장소 클론
                         git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
                         cd ${MANIFEST_REPO_DIR}
+                        
+                        # 원격의 develop 브랜치가 있는지 확인하고 체크아웃
+                        git fetch origin develop
+                        git checkout develop || git checkout -b develop origin/develop
 
                         # 이미지 태그 업데이트
                         sed -i 's/\${IMAGE_TAG}/'${DOCKER_TAG}'/g' ${OVERLAY_PATH}/deployment-patch.yaml
