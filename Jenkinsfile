@@ -12,7 +12,7 @@ pipeline {
         // 도커 이미지명
         DOCKER_IMAGE = "alphaka/${env.SERVICE_NAME}"
 
-        //도커 이미지 태그 (젠킨스 빌드 번호를 사용)
+        // 도커 이미지 태그 (젠킨스 빌드 번호를 사용)
         DOCKER_TAG = "${env.BUILD_NUMBER}"
 
         // 도커 허브 및 깃허브 자격증명
@@ -25,7 +25,6 @@ pipeline {
 
         // kustomize overlay 경로
         OVERLAY_PATH = "overlay/dev/${env.SERVICE_NAME}"
-
     }
 
     stages {
@@ -64,12 +63,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${env.GITHUB_CREDENTIAL}", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh '''
-
-                        # 기존 디렉토리 삭제
-                        if [ -d "${MANIFEST_REPO_DIR}" ]; then
-                        rm -rf ${MANIFEST_REPO_DIR}
-                        fi
-                      
+		                    # 기존 디렉토리 삭제
+				                if [ -d "${MANIFEST_REPO_DIR}" ]; then
+				                    rm -rf ${MANIFEST_REPO_DIR}
+				                fi
+                    
                         # 매니페스트 저장소 클론
                         git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
                         cd ${MANIFEST_REPO_DIR}
