@@ -20,11 +20,11 @@ pipeline {
         GITHUB_CREDENTIAL = 'git-credential'
 
         // 매니페스트 저장소
-        MANIFEST_REPO = 'https://github.com/AlphaKa2/k8s-manifest.git'
+        MANIFEST_REPO = 'github.com/AlphaKa2/k8s-manifest.git'
         MANIFEST_REPO_DIR = 'k8s-manifest'
 
         // kustomize overlay 경로
-        OVERLAY_PATH = "overlays/dev/${env.SERVICE_NAME}"
+        OVERLAY_PATH = "overlay/dev/${env.SERVICE_NAME}"
 
     }
 
@@ -65,7 +65,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: "${env.GITHUB_CREDENTIAL}", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     sh '''
                         # 매니페스트 저장소 클론
-                        git clone ${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
+                        git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@${MANIFEST_REPO} ${MANIFEST_REPO_DIR}
                         cd ${MANIFEST_REPO_DIR}
 
                         # 이미지 태그 업데이트
