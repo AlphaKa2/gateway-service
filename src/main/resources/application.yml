@@ -161,6 +161,16 @@ spring:
           '[/**]':
             allowedOrigins:
               - "${GATEWAY_URL}"
+              - 'http://localhost:3000'
+            allow-credentials: true
+            allowedHeaders: '*'
+            allowedMethods:
+              - PUT
+              - GET
+              - POST
+              - DELETE
+              - OPTIONS
+              - PATCH
 
 eureka:
   client:
