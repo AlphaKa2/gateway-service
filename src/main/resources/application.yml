@@ -184,6 +184,7 @@ logging:
   level:
     org.springframework.cloud.kubernetes.discovery: DEBUG
     org.springframework.cloud.gateway.filter: DEBUG  # 게이트웨이 필터 관련 로그
+    org.springframework.cloud.gateway.filter.cors: TRACE
     org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
     org.springframework.cloud.kubernetes: DEBUG
     reactor.netty.http.server: DEBUG   # Netty 서버 로그 디버그 레벨
