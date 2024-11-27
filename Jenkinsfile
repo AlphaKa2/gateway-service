@@ -82,7 +82,7 @@ pipeline {
                             sed -i 's/\\${IMAGE_TAG}/'"${DOCKER_TAG}"'/g' ${OVERLAY_PATH}/deployment-patch.yaml
                         else
                             # 이후 빌드일 경우 기존 태그를 새로운 DOCKER_TAG로 대체
-                            sed -i 's/alphaka\\/auth-service:[^ ]*/alphaka\\/auth-service:'"${DOCKER_TAG}"'/g' ${OVERLAY_PATH}/deployment-patch.yaml
+                            sed -i 's/alphaka\\/gateway-service:[^ ]*/alphaka\\/gateway-service:'"${DOCKER_TAG}"'/g' ${OVERLAY_PATH}/deployment-patch.yaml
                         fi
 
                         # Git 설정
