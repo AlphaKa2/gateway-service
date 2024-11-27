@@ -2,6 +2,24 @@
 server:
   port: 8000
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    operationsSorter: alpha # API 메서드 순서를 코드 정의 순으로 정렬
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /user-service/v3/api-docs
+        name: 유저 서비스
+      - url: /auth-service/v3/api-docs
+        name: 인증 서비스
+      - url: /blog-service/v3/api-docs
+        name: 블로그 서비스
+      - url: /travel-service/v3/api-docs
+        name: 여행 서비스
+
 spring:
   application:
     name: gateway-service
