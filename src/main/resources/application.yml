@@ -152,6 +152,15 @@ spring:
     activate:
       on-profile: develop
 
+  #클라우드
+  cloud:
+    gateway:
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "${GATEWAY_URL}"
 
 eureka:
   client:
