@@ -99,22 +99,22 @@ spring:
             - RewritePath=/blog-service/(?<remaining>.*), /${remaining}
 
 
-        - id: plan-service-with-authentication
+        - id: travel-service-with-authentication
           uri: lb://travel-service
           predicates:
-            - Path=/plan-service/auth/**
+            - Path=/travel-service/auth/**
           filters:
-            - RewritePath=/plan-service/auth/(?<remaining>.*), /${remaining}
+            - RewritePath=/travel-service/auth/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
               args:
                 loginPageRedirectionUrl: http://localhost:3000/login
 
-        - id: plan-service
+        - id: travel-service
           uri: lb://travel-service
           predicates:
-            - Path=/plan-service/**
+            - Path=/travel-service/**
           filters:
-            - RewritePath=/plan-service/(?<remaining>.*), /${remaining}
+            - RewritePath=/travel-service/(?<remaining>.*), /${remaining}
 
 
 #local 프로필
@@ -187,6 +187,8 @@ logging:
     org.springframework.cloud.gateway.filter.cors: TRACE
     org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
     org.springframework.cloud.kubernetes: DEBUG
+    org.springframework.http: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
     reactor.netty.http.server: DEBUG   # Netty 서버 로그 디버그 레벨
     reactor.netty: INFO                # 다른 Netty 관련 로그는 INFO로 설정
     io.kubernetes.client: DEBUG
