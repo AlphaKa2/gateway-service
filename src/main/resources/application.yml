@@ -172,6 +172,27 @@ spring:
               - OPTIONS
               - PATCH
 
+      routes:
+
+        - id: ai-service-with-authentication
+          uri: "${AI_URL}"
+          predicates:
+            - Path=/ai-service/auth/**
+          filters:
+            - RewritePath=/travel-service/auth/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: http://localhost:3000/login
+
+        - id: ai-service
+          uri: "${AI_URL}"
+          predicates:
+            - Path=/ai-service/**
+          filters:
+            - RewritePath=/travel-service/(?<remaining>.*), /${remaining}
+
+
+
 eureka:
   client:
     enabled: false
