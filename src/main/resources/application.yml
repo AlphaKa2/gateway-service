@@ -179,7 +179,7 @@ spring:
           predicates:
             - Path=/ai-service/auth/**
           filters:
-            - RewritePath=/travel-service/auth/(?<remaining>.*), /${remaining}
+            - RewritePath=/ai-service/auth/(?<remaining>.*), /${remaining}
             - name: JwtAuthenticationFilter
               args:
                 loginPageRedirectionUrl: http://localhost:3000/login
@@ -189,7 +189,7 @@ spring:
           predicates:
             - Path=/ai-service/**
           filters:
-            - RewritePath=/travel-service/(?<remaining>.*), /${remaining}
+            - RewritePath=/ai-service/(?<remaining>.*), /${remaining}
 
 
 
