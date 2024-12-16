@@ -18,6 +18,7 @@ spring:
         namespace: alphaka
         name: alphaka-common-config
 
+
       secrets:
         enabled: true
         enable-api: true
