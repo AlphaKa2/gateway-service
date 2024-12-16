@@ -116,6 +116,22 @@ spring:
           filters:
             - RewritePath=/travel-service/(?<remaining>.*), /${remaining}
 
+        - id: ai-service-with-authentication
+          uri: "${AI_URL}"
+          predicates:
+            - Path=/ai-service/auth/**
+          filters:
+            - RewritePath=/ai-service/auth/(?<remaining>.*), /${remaining}
+            - name: JwtAuthenticationFilter
+              args:
+                loginPageRedirectionUrl: http://localhost:3000/login
+
+        - id: ai-service
+          uri: "${AI_URL}"
+          predicates:
+            - Path=/ai-service/**
+          filters:
+            - RewritePath=/ai-service/(?<remaining>.*), /${remaining}
 
 #local 프로필
 ---
@@ -171,26 +187,6 @@ spring:
               - DELETE
               - OPTIONS
               - PATCH
-
-      routes:
-
-        - id: ai-service-with-authentication
-          uri: "${AI_URL}"
-          predicates:
-            - Path=/ai-service/auth/**
-          filters:
-            - RewritePath=/ai-service/auth/(?<remaining>.*), /${remaining}
-            - name: JwtAuthenticationFilter
-              args:
-                loginPageRedirectionUrl: http://localhost:3000/login
-
-        - id: ai-service
-          uri: "${AI_URL}"
-          predicates:
-            - Path=/ai-service/**
-          filters:
-            - RewritePath=/ai-service/(?<remaining>.*), /${remaining}
-
 
 
 eureka:
