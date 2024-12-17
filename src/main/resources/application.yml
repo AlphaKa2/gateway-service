@@ -27,13 +27,14 @@ spring:
   #클라우드
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials,
 
       globalcors:
         cors-configurations:
           '[/**]':
             allowedOrigins:
               - 'https://localhost:3000'
-              - 'http://localhost:3000'
             allow-credentials: true
             allowedHeaders: '*'
             allowedMethods:
