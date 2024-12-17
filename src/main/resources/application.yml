@@ -28,12 +28,13 @@ spring:
   cloud:
     gateway:
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials,
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
       globalcors:
         cors-configurations:
           '[/**]':
             allowedOrigins:
+              - 'http://localhost:3000'
               - 'https://localhost:3000'
             allow-credentials: true
             allowedHeaders: '*'
