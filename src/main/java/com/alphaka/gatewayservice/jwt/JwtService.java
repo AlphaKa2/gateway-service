@@ -13,11 +13,13 @@ import java.util.Map;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class JwtService {
 
@@ -52,7 +54,11 @@ public class JwtService {
                     .build()
                     .parseSignedClaims(token);
 
-            return claims.getPayload().getExpiration().after(new Date());
+            Date expiration = claims.getPayload().getExpiration();
+            Date now = new Date();
+
+            log.info("만료시간: {}, 현재시간: {}", expiration, now);
+            return expiration.after(now);
         } catch (JwtException e) {
             return false;
         }
